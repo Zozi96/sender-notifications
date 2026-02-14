@@ -17,7 +17,7 @@ from litestar.openapi.spec import License
 
 from auth import APIKeyAuthMiddleware
 from config import settings
-from controllers import NotificationsRouter
+from controllers import NotificationsRouter, HealthController
 from register_deps import DEPENDENCIES
 
 logging.basicConfig(
@@ -27,9 +27,9 @@ logging.basicConfig(
 
 cors_config = CORSConfig(
     allow_origins=settings.security.cors_origins,
-    allow_methods=["POST"],
-    allow_headers=["Content-Type", "X-API-KEY"],
-    allow_credentials=False,
+    allow_methods=["GET", "POST", "OPTIONS"],
+    allow_headers=["Content-Type", "X-API-KEY", "X-CSRF-Token"],
+    allow_credentials=True,
     max_age=600,
 )
 
@@ -54,7 +54,7 @@ csrf_config = (
 app = Litestar(
     debug=settings.debug,
     dependencies=DEPENDENCIES,
-    route_handlers=[NotificationsRouter],
+    route_handlers=[HealthController, NotificationsRouter],
     middleware=[APIKeyAuthMiddleware, rate_limit_config.middleware],
     cors_config=cors_config,
     csrf_config=csrf_config,

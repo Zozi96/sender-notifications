@@ -16,6 +16,16 @@ logger = logging.getLogger(__name__)
 class APIKeyAuthMiddleware(AbstractAuthenticationMiddleware):
     """Middleware to authenticate requests using X-API-KEY header."""
 
+    exclude_paths = {
+        "/",
+        "/schema",
+        "/schema/openapi.json",
+        "/schema/openapi.yaml",
+        "/swagger",
+        "/redoc",
+        "/health",
+    }
+
     async def authenticate_request(
         self, connection: ASGIConnection
     ) -> AuthenticationResult:
@@ -30,6 +40,11 @@ class APIKeyAuthMiddleware(AbstractAuthenticationMiddleware):
         Raises:
             NotAuthorizedException: If API key is missing or invalid.
         """
+        if connection.url.path in self.exclude_paths or connection.url.path.startswith(
+            "/schema"
+        ):
+            return AuthenticationResult(user=None, auth=None)
+
         api_key = connection.headers.get("X-API-KEY")
 
         if not api_key:

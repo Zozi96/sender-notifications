@@ -96,3 +96,13 @@ class EmailInput(CamelModel):
 
 class SuccessResponse(CamelModel):
     message: str
+
+
+class HealthResponse(CamelModel):
+    """Health check response schema."""
+
+    status: str = Field(
+        ...,
+        description="Current status of the service",
+        examples=["healthy"],
+    )
