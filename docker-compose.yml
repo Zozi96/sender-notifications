@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+  sender-notifications:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: sender-notifications
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    environment:
+      # Override with explicit environment variables if needed
+      - DEBUG=${DEBUG:-false}
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    networks:
+      - sender-notifications-network
+
+networks:
+  sender-notifications-network:
+    driver: bridge

@@ -39,6 +39,7 @@ rate_limit_config = RateLimitConfig(
         settings.security.rate_limit_requests,
     ),
     exclude=[r"^/$", r"^/schema/?.*"],
+    store_key=lambda connection: connection.client.host if connection.client else "unknown",
 )
 
 csrf_config = (

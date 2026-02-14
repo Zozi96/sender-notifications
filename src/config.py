@@ -1,4 +1,5 @@
 from typing import Literal
+from pydantic import EmailStr
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 config = SettingsConfigDict(
@@ -33,8 +34,8 @@ class Settings(BaseSettings):
     smtp: SMTPSettings = SMTPSettings()
     security: SecuritySettings = SecuritySettings()
 
-    email_recipient: str = ""
-    email_sender: str = ""
+    email_recipient: EmailStr
+    email_sender: EmailStr
 
     model_config = config
 
