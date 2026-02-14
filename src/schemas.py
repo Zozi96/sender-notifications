@@ -1,5 +1,6 @@
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, field_validator
 from pydantic.alias_generators import to_camel
+import bleach
 
 
 class CamelModel(BaseModel):
@@ -52,6 +53,15 @@ class NotificationTemplateVariables(CamelModel):
         max_length=500,
     )
 
+    @field_validator("headline", "body", "badge", "action_label", "footer_note")
+    @classmethod
+    def sanitize_html(cls, v: str | None) -> str | None:
+        """Sanitize HTML to prevent XSS attacks in email content."""
+        if v is None:
+            return v
+        # Strip all HTML tags and attributes to prevent XSS
+        return bleach.clean(v, tags=[], strip=True)
+
 
 class EmailInput(CamelModel):
     """Input schema for sending email notifications."""
@@ -73,6 +83,15 @@ class EmailInput(CamelModel):
         examples=["Your account has been verified successfully"],
         max_length=200,
     )
+
+    @field_validator("subject", "preview_text")
+    @classmethod
+    def sanitize_html(cls, v: str | None) -> str | None:
+        """Sanitize HTML to prevent XSS attacks in email content."""
+        if v is None:
+            return v
+        # Strip all HTML tags and attributes to prevent XSS
+        return bleach.clean(v, tags=[], strip=True)
 
 
 class SuccessResponse(CamelModel):
