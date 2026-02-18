@@ -39,6 +39,8 @@ class Settings(BaseSettings):
     email_recipient: EmailStr = "editme@example.com"
     email_sender: EmailStr = "noreply@example.com"
 
+    glitchtip_dsn: str | None = None
+
     model_config = config
 
 

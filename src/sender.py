@@ -37,7 +37,7 @@ class EmailSender(ISender[EmailInput]):
     async def send(self, payload: EmailInput) -> None:
         sender_email = settings.email_sender
         recipient_email = settings.email_recipient
-        
+
         try:
             html_body = self._render_html(payload)
             text_body = self._render_text(payload)
@@ -58,7 +58,9 @@ class EmailSender(ISender[EmailInput]):
                     img_data = img_file.read()
                     image = MIMEImage(img_data)
                     image.add_header("Content-ID", "<zozbit_logo>")
-                    image.add_header("Content-Disposition", "inline", filename="zozbit.png")
+                    image.add_header(
+                        "Content-Disposition", "inline", filename="zozbit.png"
+                    )
                     message.attach(image)
 
             smtp = settings.smtp
@@ -71,14 +73,14 @@ class EmailSender(ISender[EmailInput]):
                 await smtp_client.send_message(
                     message, sender=sender_email, recipients=[recipient_email]
                 )
-            
+
             logger.info(
                 "Email sent successfully",
                 extra={
                     "recipient": recipient_email,
                     "sender": sender_email,
                     "subject": payload.subject,
-                }
+                },
             )
         except SMTPException as e:
             logger.error(
@@ -90,9 +92,8 @@ class EmailSender(ISender[EmailInput]):
                     "error_type": type(e).__name__,
                     "error_message": str(e),
                 },
-                exc_info=True
+                exc_info=True,
             )
-            raise
         except Exception as e:
             logger.error(
                 "Unexpected error while sending email",
@@ -103,9 +104,8 @@ class EmailSender(ISender[EmailInput]):
                     "error_type": type(e).__name__,
                     "error_message": str(e),
                 },
-                exc_info=True
+                exc_info=True,
             )
-            raise
 
     def _render_html(self, payload: EmailInput) -> str:
         template_vars = self._template_variables(payload)
@@ -120,7 +120,7 @@ class EmailSender(ISender[EmailInput]):
                     "template_name": "notification.html",
                     "error_type": "TemplateNotFound",
                     "error_message": str(e),
-                }
+                },
             )
             body = template_vars.get("body", "")
             return (
@@ -139,7 +139,7 @@ class EmailSender(ISender[EmailInput]):
                     "template_name": "notification.html",
                     "error_type": "TemplateError",
                     "error_message": str(e),
-                }
+                },
             )
             body = template_vars.get("body", "")
             return (

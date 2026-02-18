@@ -7,6 +7,7 @@ warnings.filterwarnings(
 )
 
 import logging
+import sentry_sdk
 from litestar import Litestar
 from litestar.config.cors import CORSConfig
 from litestar.config.csrf import CSRFConfig
@@ -24,6 +25,14 @@ logging.basicConfig(
     level=logging.INFO if not settings.debug else logging.DEBUG,
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
 )
+
+if settings.glitchtip_dsn:
+    sentry_sdk.init(
+        dsn=settings.glitchtip_dsn,
+        environment="development" if settings.debug else "production",
+        traces_sample_rate=1.0,
+        send_default_pii=False,
+    )
 
 cors_config = CORSConfig(
     allow_origins=settings.security.cors_origins,
