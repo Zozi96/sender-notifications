@@ -3,7 +3,7 @@ from pydantic import EmailStr
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 config = SettingsConfigDict(
-    env_file="../.env", env_file_encoding="utf-8", extra="ignore"
+    env_file=("../.env", ".env"), env_file_encoding="utf-8", extra="ignore"
 )
 
 

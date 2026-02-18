@@ -17,7 +17,6 @@ def create_stores() -> StoreRegistry:
     Falls back to memory store if Redis is unavailable.
     """
     stores: dict[str, Any] = {}
-
     if not settings.security.redis_url:
         return StoreRegistry()
     
