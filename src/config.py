@@ -24,7 +24,7 @@ class SecuritySettings(BaseSettings):
     cors_origins: list[str] = [""]
     rate_limit_requests: int = 10
     rate_limit_window: Literal["second", "minute", "hour", "day"] = "minute"
-    enable_csrf: bool = True
+    enable_csrf: bool = False
 
     redis_url: str | None = None  # e.g., "redis://localhost:6379/0"
 
