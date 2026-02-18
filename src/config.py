@@ -26,6 +26,8 @@ class SecuritySettings(BaseSettings):
     rate_limit_window: Literal["second", "minute", "hour", "day"] = "minute"
     enable_csrf: bool = True
 
+    redis_url: str | None = None  # e.g., "redis://localhost:6379/0"
+
     model_config = config
 
 
@@ -34,8 +36,8 @@ class Settings(BaseSettings):
     smtp: SMTPSettings = SMTPSettings()
     security: SecuritySettings = SecuritySettings()
 
-    email_recipient: EmailStr
-    email_sender: EmailStr
+    email_recipient: EmailStr = "editme@example.com"
+    email_sender: EmailStr = "noreply@example.com"
 
     model_config = config
 

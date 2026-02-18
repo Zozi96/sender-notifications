@@ -18,7 +18,7 @@ from litestar.openapi.spec import License
 from auth import APIKeyAuthMiddleware
 from config import settings
 from controllers import NotificationsRouter, HealthController
-from register_deps import DEPENDENCIES
+from register_deps import DEPENDENCIES, create_stores
 
 logging.basicConfig(
     level=logging.INFO if not settings.debug else logging.DEBUG,
@@ -42,6 +42,7 @@ rate_limit_config = RateLimitConfig(
     identifier_for_request=lambda request: (
         request.client.host if request.client else "unknown"
     ),
+    store="rate_limit",  # Will use Redis/DragonflyDB if configured, otherwise memory
 )
 
 csrf_config = (
@@ -57,6 +58,7 @@ csrf_config = (
 app = Litestar(
     debug=settings.debug,
     dependencies=DEPENDENCIES,
+    stores=create_stores(),
     route_handlers=[HealthController, NotificationsRouter],
     middleware=[APIKeyAuthMiddleware, rate_limit_config.middleware],
     cors_config=cors_config,
