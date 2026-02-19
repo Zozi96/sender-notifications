@@ -8,6 +8,7 @@ warnings.filterwarnings(
 
 import logging
 import sentry_sdk
+from sentry_sdk.integrations.logging import LoggingIntegration
 from litestar import Litestar
 from litestar.config.cors import CORSConfig
 from litestar.config.csrf import CSRFConfig
@@ -33,6 +34,12 @@ if settings.glitchtip_dsn:
         environment="development" if settings.debug else "production",
         traces_sample_rate=1.0,
         send_default_pii=False,
+        integrations=[
+            LoggingIntegration(
+                level=logging.WARNING,
+                event_level=logging.ERROR,
+            ),
+        ],
     )
 
 cors_config = CORSConfig(
@@ -49,7 +56,9 @@ rate_limit_config = RateLimitConfig(
         settings.security.rate_limit_requests,
     ),
     exclude=[r"^/$", r"^/schema/?.*"],
-    identifier_for_request=lambda request: request.client.host if request.client else "unknown",
+    identifier_for_request=lambda request: (
+        request.client.host if request.client else "unknown"
+    ),
     store="rate_limit",  # Will use Redis/DragonflyDB if configured, otherwise memory
 )
 
