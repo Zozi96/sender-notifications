@@ -27,6 +27,7 @@ logging.basicConfig(
 )
 
 if settings.glitchtip_dsn:
+    logging.info("Initializing Sentry/Glitchtip with DSN: %s", settings.glitchtip_dsn)
     sentry_sdk.init(
         dsn=settings.glitchtip_dsn,
         environment="development" if settings.debug else "production",
@@ -48,9 +49,7 @@ rate_limit_config = RateLimitConfig(
         settings.security.rate_limit_requests,
     ),
     exclude=[r"^/$", r"^/schema/?.*"],
-    identifier_for_request=lambda request: (
-        request.client.host if request.client else "unknown"
-    ),
+    identifier_for_request=lambda request: request.client.host if request.client else "unknown",
     store="rate_limit",  # Will use Redis/DragonflyDB if configured, otherwise memory
 )
 
