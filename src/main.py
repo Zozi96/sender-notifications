@@ -27,10 +27,10 @@ logging.basicConfig(
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
 )
 
-if settings.glitchtip_dsn:
-    logging.info("Initializing Sentry/Glitchtip with DSN: %s", settings.glitchtip_dsn)
+if settings.sentry_dsn:
+    logging.info("Initializing Sentry/Glitchtip with DSN: %s", settings.sentry_dsn)
     sentry_sdk.init(
-        dsn=settings.glitchtip_dsn,
+        dsn=settings.sentry_dsn,
         environment="development" if settings.debug else "production",
         traces_sample_rate=1.0,
         send_default_pii=False,
