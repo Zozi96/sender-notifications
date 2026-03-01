@@ -87,6 +87,12 @@ ENABLE_CSRF=false
 ```bash
 # Application Settings
 DEBUG=false
+
+# Environment: development, staging, production
+# - development: Swagger enabled, debug features available
+# - staging: Swagger enabled (for QA/testing in restricted environments)
+# - production: Swagger completely disabled
+ENVIRONMENT=development
 ```
 
 ## Local Development
