@@ -31,7 +31,7 @@ if settings.sentry_dsn:
     logging.info("Initializing Sentry/Glitchtip with DSN: %s", settings.sentry_dsn)
     sentry_sdk.init(
         dsn=settings.sentry_dsn,
-        environment="development" if settings.debug else "production",
+        environment=settings.environment,
         traces_sample_rate=1.0,
         send_default_pii=False,
         integrations=[
@@ -72,15 +72,8 @@ csrf_config = (
     else None
 )
 
-app = Litestar(
-    debug=settings.debug,
-    dependencies=DEPENDENCIES,
-    stores=create_stores(),
-    route_handlers=[HealthController, NotificationsRouter],
-    middleware=[APIKeyAuthMiddleware, rate_limit_config.middleware],
-    cors_config=cors_config,
-    csrf_config=csrf_config,
-    openapi_config=OpenAPIConfig(
+openapi_config = (
+    OpenAPIConfig(
         title="Zozbit Notifications API",
         version="1.0.0",
         description="API for sending email notifications with security features: API key authentication, rate limiting, and CORS protection.",
@@ -91,5 +84,18 @@ app = Litestar(
             RedocRenderPlugin(),
         ],
         security=[{"apiKey": []}],
-    ),
+    )
+    if settings.environment != "production"
+    else None
+)
+
+app = Litestar(
+    debug=settings.debug,
+    dependencies=DEPENDENCIES,
+    stores=create_stores(),
+    route_handlers=[HealthController, NotificationsRouter],
+    middleware=[APIKeyAuthMiddleware, rate_limit_config.middleware],
+    cors_config=cors_config,
+    csrf_config=csrf_config,
+    openapi_config=openapi_config,
 )

@@ -33,6 +33,7 @@ class SecuritySettings(BaseSettings):
 
 class Settings(BaseSettings):
     debug: bool = False
+    environment: Literal['development', 'staging', 'production'] = 'development'
     smtp: SMTPSettings = SMTPSettings()
     security: SecuritySettings = SecuritySettings()
 
